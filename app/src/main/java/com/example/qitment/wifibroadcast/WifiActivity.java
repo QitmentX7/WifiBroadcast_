@@ -217,7 +217,7 @@ public abstract class WifiActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-              WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+            WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
             List<ScanResult> scanResultList = wifi.getScanResults();
             boolean found = false;
             String security = null;
@@ -228,7 +228,7 @@ public abstract class WifiActivity extends AppCompatActivity {
                     break; // found don't need continue
                 }
             }
-             if (!found) {
+            if (!found) {
                 // if no wifi network with the specified ssid is not found exit
                 if (progressDialog != null) {
                     progressDialog.dismiss();
@@ -268,13 +268,26 @@ public abstract class WifiActivity extends AppCompatActivity {
                 intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
                 intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
                 registerReceiver(connectionReceiver, intentFilter);
+
+                int networkId = wifi.getConnectionInfo().getNetworkId();
+
+                wifi.removeNetwork(networkId);
                 int netId = wifi.addNetwork(conf);
-
-
                 wifi.enableNetwork(netId, true);
                 wifi.saveConfiguration();
                 wifi.reconnect();
                 unregisterReceiver(this);
+
+                 /* int networkId = wifi.getConnectionInfo().getNetworkId();
+                 wifi.removeNetwork(networkId);
+                 wifi.saveConfiguration();
+                 //remember id
+                 int netId = wifi.addNetwork(conf);
+                 wifi.disconnect();
+                 wifi.enableNetwork(netId, true);
+                 wifi.reconnect();
+                 unregisterReceiver(this);*/
+
 
             }
         }
